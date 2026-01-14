@@ -1,8 +1,5 @@
-# Backend (Maven/Spring Boot)
-portfolio-backend/target/
-portfolio-backend/.mvn/
-portfolio-backend/mvnw
-portfolio-backend/mvnw.cmd
+# portfolio-backend/target/ is confusing, usually just target/
+**/target/
 portfolio-backend/.idea/
 portfolio-backend/*.iml
 portfolio-backend/*.iws

@@ -12,13 +12,10 @@ This guide will help you deploy your Portfolio Management System to the web so a
 
 ## Part 1: Push to GitHub
 
-1.  Create a new repository on [GitHub](https://github.com/new) named `portfolio-management-system`.
-2.  **Do NOT** check "Initialize with README" .
-3.  Push your code:
+1.  **Create Repository**: Go to [GitHub](https://github.com/new) and `codesnap` as the repository name.
+2.  **Do NOT** check "Initialize with README".
+3.  **Push Code**: Since I have already prepared your local git, you just need to run this command **after you create the repo**:
     ```bash
-    # Run these commands in your VS Code terminal (root folder)
-    git remote add origin https://github.com/<YOUR_USERNAME>/portfolio-management-system.git
-    git branch -M master
     git push -u origin master
     ```
 
@@ -32,7 +29,8 @@ This guide will help you deploy your Portfolio Management System to the web so a
 4.  **Configuration**:
     *   **Name**: `portfolio-backend`
     *   **Region**: Closest to you (e.g., Frankfurt, Oregon)
-    *   **Runtime**: **Docker** (We added a Dockerfile for you!)
+    *   **Root Directory**: `portfolio-backend` (Crucial! Otherwise it won't find the Dockerfile)
+    *   **Runtime**: **Docker**
     *   **Instance Type**: Free
 5.  Click **"Create Web Service"**.
 6.  **Wait**: It will take a few minutes to build and deploy.

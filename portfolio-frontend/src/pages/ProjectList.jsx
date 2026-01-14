@@ -5,6 +5,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Grid, List as ListIcon } from 'lucide-react';
+import API_CONFIG from '../config/config';
 import './ProjectList.css';
 
 const ProjectList = () => {
@@ -41,7 +42,7 @@ const ProjectList = () => {
             setFilteredProjects(data);
             setLoading(false);
         } catch (err) {
-            setError('Failed to load projects. Please make sure the backend is running.');
+            setError(`Failed to load projects from ${API_CONFIG.BASE_URL}. Please check if backend is running.`);
             setLoading(false);
         }
     };
