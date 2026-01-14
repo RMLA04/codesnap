@@ -1,17 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createProject } from '../services/projectService';
+import { motion } from 'framer-motion';
+import { Save, X } from 'lucide-react';
 import './ProjectForm.css';
 
-/**
- * CreateProject Page Component
- * 
- * Form for creating a new project
- * Includes client-side validation
- */
 const CreateProject = () => {
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
+    const [project, setProject] = useState({
         title: '',
         description: '',
         techStack: '',
@@ -19,23 +14,30 @@ const CreateProject = () => {
         liveDemoUrl: ''
     });
     const [errors, setErrors] = useState({});
-    const [submitting, setSubmitting] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setProject(prev => ({ ...prev, [name]: value }));
+        // Clear error when user types
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: '' }));
+        }
+    };
 
     const validateForm = () => {
         const newErrors = {};
+        if (!project.title.trim()) newErrors.title = 'Title is required';
+        if (!project.description.trim()) newErrors.description = 'Description is required';
+        if (!project.techStack.trim()) newErrors.techStack = 'Tech stack is required';
 
-        // Title is required
-        if (!formData.title.trim()) {
-            newErrors.title = 'Title is required';
+        // URL validation
+        const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+        if (project.githubUrl && !urlPattern.test(project.githubUrl)) {
+            newErrors.githubUrl = 'Please enter a valid URL (e.g., https://github.com/user/repo)';
         }
-
-        // Validate GitHub URL format if provided
-        if (formData.githubUrl && !isValidUrl(formData.githubUrl)) {
-            newErrors.githubUrl = 'Please enter a valid URL';
-        }
-
-        // Validate Live Demo URL format if provided
-        if (formData.liveDemoUrl && !isValidUrl(formData.liveDemoUrl)) {
+        if (project.liveDemoUrl && !urlPattern.test(project.liveDemoUrl)) {
             newErrors.liveDemoUrl = 'Please enter a valid URL';
         }
 
@@ -43,142 +45,120 @@ const CreateProject = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const isValidUrl = (url) => {
-        try {
-            new URL(url);
-            return true;
-        } catch {
-            return false;
-        }
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-        // Clear error for this field when user starts typing
-        if (errors[name]) {
-            setErrors(prev => ({
-                ...prev,
-                [name]: ''
-            }));
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!validateForm()) {
-            return;
-        }
+        if (!validateForm()) return;
 
+        setLoading(true);
         try {
-            setSubmitting(true);
-            await createProject(formData);
+            await createProject(project);
             navigate('/');
         } catch (err) {
-            alert('Failed to create project. Please try again.');
+            setErrors({ submit: 'Failed to create project. Please check if backend is running.' });
         } finally {
-            setSubmitting(false);
+            setLoading(false);
         }
     };
 
     return (
-        <div className="form-container">
-            <div className="form-header">
-                <h1>Create New Project</h1>
-                <p>Add a new project to your portfolio</p>
-            </div>
+        <div className="container">
+            <motion.div
+                className="form-container"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+            >
+                <h2>Create New Project</h2>
 
-            <form onSubmit={handleSubmit} className="project-form">
-                <div className="form-group">
-                    <label htmlFor="title">
-                        Project Title <span className="required">*</span>
-                    </label>
-                    <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        className={errors.title ? 'error' : ''}
-                        placeholder="Enter project title"
-                    />
-                    {errors.title && <span className="error-text">{errors.title}</span>}
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="description">Description</label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        rows="5"
-                        placeholder="Describe your project..."
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="techStack">Tech Stack</label>
-                    <input
-                        type="text"
-                        id="techStack"
-                        name="techStack"
-                        value={formData.techStack}
-                        onChange={handleChange}
-                        placeholder="e.g., React, Spring Boot, PostgreSQL"
-                    />
-                    <small>Separate technologies with commas</small>
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="githubUrl">GitHub URL</label>
-                    <input
-                        type="url"
-                        id="githubUrl"
-                        name="githubUrl"
-                        value={formData.githubUrl}
-                        onChange={handleChange}
-                        className={errors.githubUrl ? 'error' : ''}
-                        placeholder="https://github.com/username/repo"
-                    />
-                    {errors.githubUrl && <span className="error-text">{errors.githubUrl}</span>}
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="liveDemoUrl">Live Demo URL</label>
-                    <input
-                        type="url"
-                        id="liveDemoUrl"
-                        name="liveDemoUrl"
-                        value={formData.liveDemoUrl}
-                        onChange={handleChange}
-                        className={errors.liveDemoUrl ? 'error' : ''}
-                        placeholder="https://your-project.com"
-                    />
-                    {errors.liveDemoUrl && <span className="error-text">{errors.liveDemoUrl}</span>}
-                </div>
-
-                <div className="form-actions">
-                    <button
-                        type="submit"
-                        className="btn btn-submit"
-                        disabled={submitting}
+                {errors.submit && (
+                    <motion.div
+                        className="error-banner"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
                     >
-                        {submitting ? 'Creating...' : 'Create Project'}
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => navigate('/')}
-                        className="btn btn-cancel"
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </form>
+                        {errors.submit}
+                    </motion.div>
+                )}
+
+                <form onSubmit={handleSubmit} noValidate>
+                    <div className="form-group">
+                        <label>Project Title *</label>
+                        <input
+                            type="text"
+                            name="title"
+                            value={project.title}
+                            onChange={handleChange}
+                            className={errors.title ? 'error' : ''}
+                            placeholder="e.g. E-Commerce Platform"
+                        />
+                        {errors.title && <span className="error-text">{errors.title}</span>}
+                    </div>
+
+                    <div className="form-group">
+                        <label>Description *</label>
+                        <textarea
+                            name="description"
+                            value={project.description}
+                            onChange={handleChange}
+                            className={errors.description ? 'error' : ''}
+                            placeholder="Describe your project functionality and goals..."
+                            rows="4"
+                        />
+                        {errors.description && <span className="error-text">{errors.description}</span>}
+                    </div>
+
+                    <div className="form-group">
+                        <label>Tech Stack *</label>
+                        <input
+                            type="text"
+                            name="techStack"
+                            value={project.techStack}
+                            onChange={handleChange}
+                            className={errors.techStack ? 'error' : ''}
+                            placeholder="e.g. React, Spring Boot, PostgreSQL"
+                        />
+                        {errors.techStack && <span className="error-text">{errors.techStack}</span>}
+                    </div>
+
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label>GitHub URL</label>
+                            <input
+                                type="text"
+                                name="githubUrl"
+                                value={project.githubUrl}
+                                onChange={handleChange}
+                                className={errors.githubUrl ? 'error' : ''}
+                                placeholder="https://github.com/..."
+                            />
+                            {errors.githubUrl && <span className="error-text">{errors.githubUrl}</span>}
+                        </div>
+
+                        <div className="form-group">
+                            <label>Live Demo URL</label>
+                            <input
+                                type="text"
+                                name="liveDemoUrl"
+                                value={project.liveDemoUrl}
+                                onChange={handleChange}
+                                className={errors.liveDemoUrl ? 'error' : ''}
+                                placeholder="https://..."
+                            />
+                            {errors.liveDemoUrl && <span className="error-text">{errors.liveDemoUrl}</span>}
+                        </div>
+                    </div>
+
+                    <div className="form-actions">
+                        <button type="button" className="btn btn-outline" onClick={() => navigate('/')}>
+                            <X size={18} /> Cancel
+                        </button>
+                        <button type="submit" className="btn btn-primary" disabled={loading}>
+                            {loading ? 'Saving...' : <><Save size={18} /> Create Project</>}
+                        </button>
+                    </div>
+                </form>
+            </motion.div>
         </div>
     );
 };

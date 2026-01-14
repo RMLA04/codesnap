@@ -1,20 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getProjectById, updateProject } from '../services/projectService';
 import LoadingSpinner from '../components/LoadingSpinner';
-import ErrorMessage from '../components/ErrorMessage';
+import { motion } from 'framer-motion';
+import { Save, X } from 'lucide-react';
 import './ProjectForm.css';
 
-/**
- * EditProject Page Component
- * 
- * Form for editing an existing project
- * Fetches project data and pre-fills the form
- */
 const EditProject = () => {
     const { id } = useParams();
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
+    const [project, setProject] = useState({
         title: '',
         description: '',
         techStack: '',
@@ -23,8 +17,7 @@ const EditProject = () => {
     });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true);
-    const [submitting, setSubmitting] = useState(false);
-    const [fetchError, setFetchError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchProject();
@@ -32,34 +25,34 @@ const EditProject = () => {
 
     const fetchProject = async () => {
         try {
-            setLoading(true);
             const data = await getProjectById(id);
-            setFormData({
-                title: data.title || '',
-                description: data.description || '',
-                techStack: data.techStack || '',
-                githubUrl: data.githubUrl || '',
-                liveDemoUrl: data.liveDemoUrl || ''
-            });
-        } catch (err) {
-            setFetchError('Failed to load project. Project may not exist.');
-        } finally {
+            setProject(data);
             setLoading(false);
+        } catch (err) {
+            setErrors({ submit: 'Failed to load project data.' });
+            setLoading(false);
+        }
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setProject(prev => ({ ...prev, [name]: value }));
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: '' }));
         }
     };
 
     const validateForm = () => {
         const newErrors = {};
+        if (!project.title.trim()) newErrors.title = 'Title is required';
+        if (!project.description.trim()) newErrors.description = 'Description is required';
+        if (!project.techStack.trim()) newErrors.techStack = 'Tech stack is required';
 
-        if (!formData.title.trim()) {
-            newErrors.title = 'Title is required';
-        }
-
-        if (formData.githubUrl && !isValidUrl(formData.githubUrl)) {
+        const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+        if (project.githubUrl && !urlPattern.test(project.githubUrl)) {
             newErrors.githubUrl = 'Please enter a valid URL';
         }
-
-        if (formData.liveDemoUrl && !isValidUrl(formData.liveDemoUrl)) {
+        if (project.liveDemoUrl && !urlPattern.test(project.liveDemoUrl)) {
             newErrors.liveDemoUrl = 'Please enter a valid URL';
         }
 
@@ -67,144 +60,112 @@ const EditProject = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const isValidUrl = (url) => {
-        try {
-            new URL(url);
-            return true;
-        } catch {
-            return false;
-        }
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-        if (errors[name]) {
-            setErrors(prev => ({
-                ...prev,
-                [name]: ''
-            }));
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!validateForm()) {
-            return;
-        }
+        if (!validateForm()) return;
 
+        setLoading(true);
         try {
-            setSubmitting(true);
-            await updateProject(id, formData);
-            navigate(`/project/${id}`);
+            await updateProject(id, project);
+            navigate('/');
         } catch (err) {
-            alert('Failed to update project. Please try again.');
-        } finally {
-            setSubmitting(false);
+            setErrors({ submit: 'Failed to update project.' });
+            setLoading(false);
         }
     };
 
     if (loading) return <LoadingSpinner />;
-    if (fetchError) return <ErrorMessage message={fetchError} />;
 
     return (
-        <div className="form-container">
-            <div className="form-header">
-                <h1>Edit Project</h1>
-                <p>Update your project information</p>
-            </div>
+        <div className="container">
+            <motion.div
+                className="form-container"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+            >
+                <h2>Edit Project</h2>
 
-            <form onSubmit={handleSubmit} className="project-form">
-                <div className="form-group">
-                    <label htmlFor="title">
-                        Project Title <span className="required">*</span>
-                    </label>
-                    <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        className={errors.title ? 'error' : ''}
-                        placeholder="Enter project title"
-                    />
-                    {errors.title && <span className="error-text">{errors.title}</span>}
-                </div>
+                {errors.submit && (
+                    <motion.div className="error-banner">
+                        {errors.submit}
+                    </motion.div>
+                )}
 
-                <div className="form-group">
-                    <label htmlFor="description">Description</label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        rows="5"
-                        placeholder="Describe your project..."
-                    />
-                </div>
+                <form onSubmit={handleSubmit} noValidate>
+                    <div className="form-group">
+                        <label>Project Title *</label>
+                        <input
+                            type="text"
+                            name="title"
+                            value={project.title}
+                            onChange={handleChange}
+                            className={errors.title ? 'error' : ''}
+                        />
+                        {errors.title && <span className="error-text">{errors.title}</span>}
+                    </div>
 
-                <div className="form-group">
-                    <label htmlFor="techStack">Tech Stack</label>
-                    <input
-                        type="text"
-                        id="techStack"
-                        name="techStack"
-                        value={formData.techStack}
-                        onChange={handleChange}
-                        placeholder="e.g., React, Spring Boot, PostgreSQL"
-                    />
-                    <small>Separate technologies with commas</small>
-                </div>
+                    <div className="form-group">
+                        <label>Description *</label>
+                        <textarea
+                            name="description"
+                            value={project.description}
+                            onChange={handleChange}
+                            className={errors.description ? 'error' : ''}
+                            rows="4"
+                        />
+                        {errors.description && <span className="error-text">{errors.description}</span>}
+                    </div>
 
-                <div className="form-group">
-                    <label htmlFor="githubUrl">GitHub URL</label>
-                    <input
-                        type="url"
-                        id="githubUrl"
-                        name="githubUrl"
-                        value={formData.githubUrl}
-                        onChange={handleChange}
-                        className={errors.githubUrl ? 'error' : ''}
-                        placeholder="https://github.com/username/repo"
-                    />
-                    {errors.githubUrl && <span className="error-text">{errors.githubUrl}</span>}
-                </div>
+                    <div className="form-group">
+                        <label>Tech Stack *</label>
+                        <input
+                            type="text"
+                            name="techStack"
+                            value={project.techStack}
+                            onChange={handleChange}
+                            className={errors.techStack ? 'error' : ''}
+                        />
+                        {errors.techStack && <span className="error-text">{errors.techStack}</span>}
+                    </div>
 
-                <div className="form-group">
-                    <label htmlFor="liveDemoUrl">Live Demo URL</label>
-                    <input
-                        type="url"
-                        id="liveDemoUrl"
-                        name="liveDemoUrl"
-                        value={formData.liveDemoUrl}
-                        onChange={handleChange}
-                        className={errors.liveDemoUrl ? 'error' : ''}
-                        placeholder="https://your-project.com"
-                    />
-                    {errors.liveDemoUrl && <span className="error-text">{errors.liveDemoUrl}</span>}
-                </div>
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label>GitHub URL</label>
+                            <input
+                                type="text"
+                                name="githubUrl"
+                                value={project.githubUrl}
+                                onChange={handleChange}
+                                className={errors.githubUrl ? 'error' : ''}
+                            />
+                            {errors.githubUrl && <span className="error-text">{errors.githubUrl}</span>}
+                        </div>
 
-                <div className="form-actions">
-                    <button
-                        type="submit"
-                        className="btn btn-submit"
-                        disabled={submitting}
-                    >
-                        {submitting ? 'Updating...' : 'Update Project'}
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => navigate(`/project/${id}`)}
-                        className="btn btn-cancel"
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </form>
+                        <div className="form-group">
+                            <label>Live Demo URL</label>
+                            <input
+                                type="text"
+                                name="liveDemoUrl"
+                                value={project.liveDemoUrl}
+                                onChange={handleChange}
+                                className={errors.liveDemoUrl ? 'error' : ''}
+                            />
+                            {errors.liveDemoUrl && <span className="error-text">{errors.liveDemoUrl}</span>}
+                        </div>
+                    </div>
+
+                    <div className="form-actions">
+                        <button type="button" className="btn btn-outline" onClick={() => navigate('/')}>
+                            <X size={18} /> Cancel
+                        </button>
+                        <button type="submit" className="btn btn-primary" disabled={loading}>
+                            {loading ? 'Saving...' : <><Save size={18} /> Update Project</>}
+                        </button>
+                    </div>
+                </form>
+            </motion.div>
         </div>
     );
 };
