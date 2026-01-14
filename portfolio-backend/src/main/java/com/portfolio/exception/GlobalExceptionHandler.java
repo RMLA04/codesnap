@@ -37,14 +37,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
             ResourceNotFoundException ex, WebRequest request) {
-        
+
         ErrorResponse errorResponse = new ErrorResponse(
-            LocalDateTime.now(),
-            ex.getMessage(),
-            request.getDescription(false),
-            HttpStatus.NOT_FOUND.value()
-        );
-        
+                LocalDateTime.now(),
+                ex.getMessage(),
+                request.getDescription(false),
+                HttpStatus.NOT_FOUND.value());
+
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
@@ -55,20 +54,37 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
-        
+
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("timestamp", LocalDateTime.now());
         response.put("status", HttpStatus.BAD_REQUEST.value());
         response.put("errors", errors);
-        
+
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handle NoResourceFoundException (Spring Boot 3.2+)
+     * Example: accessing / or unknown paths
+     */
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFoundException(
+            org.springframework.web.servlet.resource.NoResourceFoundException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                "Resource not found",
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND.value());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -78,14 +94,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(
             Exception ex, WebRequest request) {
-        
+
+        // Print stack trace to logs for Render dashboard
+        ex.printStackTrace();
+
         ErrorResponse errorResponse = new ErrorResponse(
-            LocalDateTime.now(),
-            "An error occurred processing your request",
-            ex.getMessage(),
-            HttpStatus.INTERNAL_SERVER_ERROR.value()
-        );
-        
+                LocalDateTime.now(),
+                "Internal Server Error: " + ex.getClass().getName(),
+                ex.getMessage(), // Return actual error message for debugging
+                HttpStatus.INTERNAL_SERVER_ERROR.value());
+
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
