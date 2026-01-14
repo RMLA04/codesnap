@@ -27,7 +27,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("*") // Allow all origins for easier deployment testing
+                        .allowedOriginPatterns("*") // Use patterns to allow * with credentials
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
