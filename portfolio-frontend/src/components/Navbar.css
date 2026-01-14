@@ -1,65 +1,105 @@
 .navbar {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: var(--surface-color);
+    box-shadow: var(--shadow-sm);
+    padding: 1rem 0;
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    background-color: rgba(var(--surface-color), 0.8);
+    /* For glassmorphism if we used RGB vars, simplest is just opacity */
+    border-bottom: 1px solid var(--border-color);
 }
 
-.nav-container {
+.navbar-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 1rem 2rem;
+    padding: 0 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.nav-logo {
+.navbar-logo {
     font-size: 1.5rem;
     font-weight: 700;
-    color: white;
+    color: var(--primary-color);
     text-decoration: none;
-    transition: opacity 0.3s ease;
-}
-
-.nav-logo:hover {
-    opacity: 0.9;
-}
-
-.nav-menu {
     display: flex;
-    list-style: none;
-    gap: 2rem;
-    margin: 0;
-    padding: 0;
+    align-items: center;
+    gap: 0.5rem;
+    letter-spacing: -0.5px;
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
 }
 
 .nav-link {
-    color: white;
     text-decoration: none;
+    color: var(--text-secondary);
     font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    transition: color 0.2s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
 }
 
 .nav-link:hover {
-    background: rgba(255, 255, 255, 0.1);
+    color: var(--primary-color);
+    background-color: var(--bg-color);
 }
 
 .nav-link.active {
-    background: rgba(255, 255, 255, 0.2);
+    color: var(--primary-color);
     font-weight: 600;
 }
 
-@media (max-width: 768px) {
-    .nav-container {
+.active-indicator {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    border-radius: 2px;
+}
+
+.theme-toggle {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    /* Circle button */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 0.5rem;
+}
+
+.theme-toggle:hover {
+    background-color: var(--bg-color);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+@media (max-width: 600px) {
+    .navbar-container {
         flex-direction: column;
         gap: 1rem;
     }
 
-    .nav-menu {
-        gap: 1rem;
+    .navbar-links {
+        width: 100%;
+        justify-content: space-between;
     }
 }

@@ -1,104 +1,137 @@
 .project-card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: var(--surface-color);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
     height: 100%;
+    position: relative;
 }
 
-.project-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-}
-
-.card-header h3 {
-    margin: 0 0 1rem 0;
-    color: #333;
-    font-size: 1.5rem;
-}
-
-.card-body {
-    flex: 1;
-}
-
-.description {
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-}
-
-.tech-stack {
-    background: #f0f0f0;
-    padding: 0.5rem;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-}
-
-.card-links {
+.card-header {
+    padding: 1.5rem;
     display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: linear-gradient(135deg, var(--primary-light) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
-.external-link {
-    color: #667eea;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.external-link:hover {
-    color: #764ba2;
-    text-decoration: underline;
+.icon-wrapper {
+    background-color: var(--surface-color);
+    padding: 10px;
+    border-radius: 12px;
+    color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
 }
 
 .card-actions {
     display: flex;
     gap: 0.5rem;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
 }
 
-.btn {
-    padding: 0.5rem 1rem;
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
     border: none;
-    border-radius: 5px;
+    background-color: var(--bg-color);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    background-color: var(--surface-color);
+    color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.action-btn.delete:hover {
+    color: var(--danger-color);
+    background-color: #fef2f2;
+}
+
+.card-content {
+    padding: 0 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.project-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.project-description {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+.tech-stack {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    background-color: var(--primary-light);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    width: fit-content;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.project-links {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: auto;
+    flex-wrap: wrap;
+}
+
+.link-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.6rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
     font-weight: 500;
     text-decoration: none;
-    text-align: center;
-    transition: all 0.3s ease;
-    flex: 1;
+    transition: all 0.2s;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
 }
 
-.btn-view {
-    background: #667eea;
+.link-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background-color: var(--primary-light);
+}
+
+.link-btn.details {
+    background-color: var(--primary-color);
     color: white;
+    border: none;
 }
 
-.btn-view:hover {
-    background: #5568d3;
-}
-
-.btn-edit {
-    background: #48bb78;
+.link-btn.details:hover {
+    background-color: var(--primary-hover);
     color: white;
-}
-
-.btn-edit:hover {
-    background: #38a169;
-}
-
-.btn-delete {
-    background: #f56565;
-    color: white;
-}
-
-.btn-delete:hover {
-    background: #e53e3e;
 }

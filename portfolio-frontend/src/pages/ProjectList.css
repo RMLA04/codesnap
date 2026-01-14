@@ -1,112 +1,85 @@
-.project-list-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.page-header {
-    text-align: center;
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
-.page-header h1 {
-    color: #333;
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
+.list-header h1 {
+    font-size: 2rem;
+    color: var(--text-primary);
+    font-weight: 800;
+    letter-spacing: -0.025em;
 }
 
-.page-header p {
-    color: #666;
-    font-size: 1.1rem;
+.controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 }
 
 .search-bar {
-    margin-bottom: 2rem;
+    position: relative;
+    width: 300px;
 }
 
-.search-input {
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.search-bar input {
     width: 100%;
-    padding: 1rem;
-    font-size: 1rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    transition: border-color 0.3s ease;
+    padding: 0.75rem 1rem 0.75rem 2.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    background-color: var(--surface-color);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    outline: none;
 }
 
-.search-input:focus {
-    outline: none;
-    border-color: #667eea;
+.search-bar input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px var(--primary-light);
 }
 
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2rem;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
 }
 
-.no-projects {
+.no-results {
     text-align: center;
-    padding: 3rem;
-    background: #f9f9f9;
-    border-radius: 10px;
-    margin: 2rem 0;
-}
-
-.no-projects p {
-    color: #666;
+    padding: 4rem;
+    background-color: var(--surface-color);
+    border-radius: 16px;
+    border: 1px dashed var(--border-color);
+    color: var(--text-secondary);
     font-size: 1.1rem;
-    margin-bottom: 1.5rem;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1rem 2rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .pagination {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
     margin-top: 2rem;
 }
 
-.pagination-btn {
-    padding: 0.75rem 1.5rem;
-    background: #667eea;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background 0.3s ease;
-}
-
-.pagination-btn:hover:not(:disabled) {
-    background: #5568d3;
-}
-
-.pagination-btn:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-}
-
 .page-info {
+    color: var(--text-secondary);
     font-weight: 500;
-    color: #666;
+    font-size: 0.95rem;
 }
 
 @media (max-width: 768px) {
@@ -114,7 +87,12 @@
         grid-template-columns: 1fr;
     }
 
-    .page-header h1 {
-        font-size: 2rem;
+    .list-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-bar {
+        width: 100%;
     }
 }

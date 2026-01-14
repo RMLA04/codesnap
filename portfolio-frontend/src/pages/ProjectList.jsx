@@ -1,26 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { getAllProjects, deleteProject } from '../services/projectService';
 import ProjectCard from '../components/ProjectCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
-import { getAllProjects, deleteProject } from '../services/projectService';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Grid, List as ListIcon } from 'lucide-react';
 import './ProjectList.css';
 
-/**
- * ProjectList Page Component
- * 
- * Main page displaying all projects with:
- * - Search/filter functionality
- * - Pagination
- * - Loading and error states
- * - Delete functionality
- * 
- * Demonstrates:
- * - React Hooks (useState, useEffect)
- * - API integration
- * - State management
- * - Error handling
- */
 const ProjectList = () => {
     const [projects, setProjects] = useState([]);
     const [filteredProjects, setFilteredProjects] = useState([]);
@@ -28,129 +14,137 @@ const ProjectList = () => {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const projectsPerPage = 6;
-    const navigate = useNavigate();
+    const [layout, setLayout] = useState('grid');
 
-    // Fetch projects on component mount
+    // Pagination
+    const projectsPerPage = 6;
+    const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
+
     useEffect(() => {
         fetchProjects();
     }, []);
 
-    // Filter projects when search term changes
     useEffect(() => {
-        filterProjects();
+        const results = projects.filter(project => {
+            const matchesTitle = project.title.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesStack = project.techStack && project.techStack.toLowerCase().includes(searchTerm.toLowerCase());
+            return matchesTitle || matchesStack;
+        });
+        setFilteredProjects(results);
+        setCurrentPage(1);
     }, [searchTerm, projects]);
 
     const fetchProjects = async () => {
         try {
-            setLoading(true);
-            setError(null);
             const data = await getAllProjects();
             setProjects(data);
             setFilteredProjects(data);
+            setLoading(false);
         } catch (err) {
             setError('Failed to load projects. Please make sure the backend is running.');
-        } finally {
             setLoading(false);
         }
     };
 
-    const filterProjects = () => {
-        if (!searchTerm.trim()) {
-            setFilteredProjects(projects);
-            return;
-        }
-
-        const filtered = projects.filter(project =>
-            project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (project.techStack && project.techStack.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
-        setFilteredProjects(filtered);
-        setCurrentPage(1); // Reset to first page when filtering
-    };
-
     const handleDelete = async (id) => {
-        try {
-            await deleteProject(id);
-            // Refresh projects after deletion
-            fetchProjects();
-        } catch (err) {
-            alert('Failed to delete project. Please try again.');
+        if (window.confirm('Are you sure you want to delete this project?')) {
+            try {
+                await deleteProject(id);
+                setProjects(projects.filter(project => project.id !== id));
+            } catch (err) {
+                setError('Failed to delete project.');
+            }
         }
     };
-
-    // Pagination logic
-    const indexOfLastProject = currentPage * projectsPerPage;
-    const indexOfFirstProject = indexOfLastProject - projectsPerPage;
-    const currentProjects = filteredProjects.slice(indexOfFirstProject, indexOfLastProject);
-    const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    // Get current projects
+    const indexOfLastProject = currentPage * projectsPerPage;
+    const indexOfFirstProject = indexOfLastProject - projectsPerPage;
+    const currentProjects = filteredProjects.slice(indexOfFirstProject, indexOfLastProject);
+
     if (loading) return <LoadingSpinner />;
     if (error) return <ErrorMessage message={error} />;
 
     return (
-        <div className="project-list-container">
-            <div className="page-header">
-                <h1>My Portfolio Projects</h1>
-                <p>Manage and showcase your amazing projects</p>
-            </div>
-
-            <div className="search-bar">
-                <input
-                    type="text"
-                    placeholder="Search by title or tech stack..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="search-input"
-                />
-            </div>
+        <div className="container">
+            <motion.div
+                className="list-header"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                <h1>My Projects</h1>
+                <div className="controls">
+                    <div className="search-bar">
+                        <Search size={20} className="search-icon" />
+                        <input
+                            type="text"
+                            placeholder="Search projects..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                </div>
+            </motion.div>
 
             {filteredProjects.length === 0 ? (
-                <div className="no-projects">
-                    <p>No projects found. {searchTerm ? 'Try a different search term.' : 'Start by adding your first project!'}</p>
-                    <button onClick={() => navigate('/create')} className="btn-primary">
-                        Add Your First Project
+                <motion.div
+                    className="no-results"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                >
+                    <p>No projects found matching current filter.</p>
+                </motion.div>
+            ) : (
+                <motion.div
+                    className="projects-grid"
+                    layout
+                >
+                    <AnimatePresence>
+                        {currentProjects.map((project, index) => (
+                            <motion.div
+                                key={project.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                transition={{ delay: index * 0.1 }}
+                                layout
+                            >
+                                <ProjectCard
+                                    project={project}
+                                    onDelete={handleDelete}
+                                />
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </motion.div>
+            )}
+
+            {totalPages > 1 && (
+                <div className="pagination">
+                    <button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="btn btn-outline"
+                    >
+                        Previous
+                    </button>
+                    <span className="page-info">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="btn btn-outline"
+                    >
+                        Next
                     </button>
                 </div>
-            ) : (
-                <>
-                    <div className="projects-grid">
-                        {currentProjects.map(project => (
-                            <ProjectCard
-                                key={project.id}
-                                project={project}
-                                onDelete={handleDelete}
-                            />
-                        ))}
-                    </div>
-
-                    {totalPages > 1 && (
-                        <div className="pagination">
-                            <button
-                                onClick={() => handlePageChange(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                className="pagination-btn"
-                            >
-                                Previous
-                            </button>
-                            <span className="page-info">
-                                Page {currentPage} of {totalPages}
-                            </span>
-                            <button
-                                onClick={() => handlePageChange(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                                className="pagination-btn"
-                            >
-                                Next
-                            </button>
-                        </div>
-                    )}
-                </>
             )}
         </div>
     );

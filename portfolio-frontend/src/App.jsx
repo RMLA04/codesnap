@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import ProjectList from './pages/ProjectList';
 import ProjectDetails from './pages/ProjectDetails';
@@ -22,22 +23,24 @@ import './App.css';
  */
 function App() {
   return (
-    <Router>
-      <div className="app">
-        <Navbar />
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<ProjectList />} />
-            <Route path="/project/:id" element={<ProjectDetails />} />
-            <Route path="/create" element={<CreateProject />} />
-            <Route path="/edit/:id" element={<EditProject />} />
-          </Routes>
-        </main>
-        <footer className="footer">
-          <p>&copy; 2026 Portfolio Management System. Built with React & Spring Boot.</p>
-        </footer>
-      </div>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <div className="app">
+          <Navbar />
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<ProjectList />} />
+              <Route path="/project/:id" element={<ProjectDetails />} />
+              <Route path="/create" element={<CreateProject />} />
+              <Route path="/edit/:id" element={<EditProject />} />
+            </Routes>
+          </main>
+          <footer className="footer">
+            <p>&copy; 2026 Portfolio Management System. Built with React & Spring Boot.</p>
+          </footer>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 
