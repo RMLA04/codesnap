@@ -33,7 +33,7 @@ This guide will help you deploy your Portfolio Management System to the web so a
     *   **Environment**: Select `Java` (NOT Docker).
     *   **Build Command**:
         ```bash
-        ./mvnw clean package -DskipTests
+        chmod +x mvnw && ./mvnw clean package -DskipTests
         ```
     *   **Start Command**:
         ```bash
