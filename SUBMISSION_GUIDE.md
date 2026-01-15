@@ -25,7 +25,7 @@ This repository contains:
 ### 2. Live Deployed Application
 
 #### Frontend (User Interface)
-**URL**: `[INSERT YOUR VERCEL URL HERE]`
+**URL**: https://codesnap-lime.vercel.app/
 
 This is the live web application where you can:
 - View the portfolio interface
@@ -34,10 +34,10 @@ This is the live web application where you can:
 - Experience the dark/light theme toggle
 
 #### Backend API (Server)
-**URL**: `[INSERT YOUR RENDER URL HERE]`
+**URL**: `https://portfolio-backend-u87w.onrender.com/`
 
 The RESTful API endpoint. You can test it by:
-- Visiting `[YOUR_BACKEND_URL]/api/projects` to see all projects
+- Visiting `https://portfolio-backend-u87w.onrender.com/api/projects` to see all projects
 - The frontend automatically communicates with this backend
 
 ### 3. Project Highlights
