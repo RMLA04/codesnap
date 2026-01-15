@@ -8,9 +8,9 @@
 
 ## 🌐 Live Demo
 
-- **Frontend**: [https://codesnap-front.vercel.app](https://codesnap-front.vercel.app) _(Replace with your actual Vercel URL)_
-- **Backend API**: [https://your-backend.onrender.com](https://your-backend.onrender.com) _(Replace with your actual Render URL)_
-- **GitHub Repository**: [https://github.com/RMLA04/codesnap](https://github.com/RMLA04/codesnap)
+- **Frontend**: https://codesnap-lime.vercel.app/
+- **Backend API**: https://portfolio-backend-u87w.onrender.com/ 
+- **GitHub Repository**: https://github.com/RMLA04/codesnap
 
 ![Portfolio Demo](https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop)
 
