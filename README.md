@@ -1,6 +1,16 @@
 # 🎨 Portfolio Management System
 
+**Author**: Adolat Gharibshoeva  
+**Cohort**: CS, Class of 2028  
+**Courses**: Web and Internet Technologies & Object-Oriented Programming
+
 > A full-stack, aesthetically pleasing, and responsive portfolio application built with **React**, **Spring Boot**, and modern design principles.
+
+## 🌐 Live Demo
+
+- **Frontend**: [https://codesnap-front.vercel.app](https://codesnap-front.vercel.app) _(Replace with your actual Vercel URL)_
+- **Backend API**: [https://your-backend.onrender.com](https://your-backend.onrender.com) _(Replace with your actual Render URL)_
+- **GitHub Repository**: [https://github.com/RMLA04/codesnap](https://github.com/RMLA04/codesnap)
 
 ![Portfolio Demo](https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop)
 
@@ -28,6 +38,17 @@
 *   **Spring Boot 3** (Web, JPA, Validation)
 *   **H2 Database** (In-Memory)
 
+## 🧩 OOP Principles Demonstrated
+
+This project showcases core Object-Oriented Programming concepts:
+
+*   **Encapsulation**: Project entity with private fields and getters/setters
+*   **Abstraction**: Service layer abstracts business logic from controllers
+*   **Separation of Concerns**: Clear MVC architecture (Model-View-Controller)
+*   **Dependency Injection**: Spring Boot's IoC container manages dependencies
+*   **Exception Handling**: Custom exception classes for robust error management
+*   **Data Transfer Objects (DTOs)**: Clean separation between entities and API responses
+
 ## 🚀 Quick Start
 
 ### Backend (Spring Boot)
@@ -52,14 +73,50 @@
 
 ## ☁️ Deployment
 
+This application is deployed using modern cloud platforms:
+
 ### Backend (Render)
+*   **Platform**: [Render.com](https://render.com)
 *   **Runtime**: Docker
 *   **Root Directory**: `portfolio-backend`
-*   **Env Vars**: None required for H2.
+*   **Database**: H2 in-memory (data resets on restart)
 
 ### Frontend (Vercel)
+*   **Platform**: [Vercel.com](https://vercel.com)
 *   **Framework**: Vite
-*   **Env Variable**: `VITE_API_URL` = `YOUR_BACKEND_URL/api`
+*   **Environment Variable**: `VITE_API_URL` pointing to backend API
 
-## 📝 License
-MIT License - Fee free to use and modify!
+For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+## 📚 Project Structure
+
+```
+codesnap/
+├── portfolio-backend/       # Spring Boot REST API
+│   ├── src/main/java/
+│   │   └── com/portfolio/
+│   │       ├── controller/  # REST endpoints
+│   │       ├── service/     # Business logic
+│   │       ├── entity/      # JPA entities
+│   │       ├── dto/         # Data transfer objects
+│   │       ├── repository/  # Data access layer
+│   │       ├── exception/   # Custom exceptions
+│   │       └── config/      # Configuration classes
+│   └── Dockerfile
+├── portfolio-frontend/      # React + Vite SPA
+│   ├── src/
+│   │   ├── components/      # Reusable UI components
+│   │   ├── services/        # API integration
+│   │   └── config/          # Environment config
+│   └── vercel.json
+└── README.md
+```
+
+## 📝 Academic Context
+
+This project was developed as part of:
+- **Web and Internet Technologies**: Demonstrates full-stack web development, RESTful APIs, HTTP protocols, and modern deployment practices
+- **Object-Oriented Programming**: Implements OOP principles including encapsulation, abstraction, inheritance (exception hierarchy), and polymorphism
+
+## 📄 License
+MIT License - Feel free to use and modify!
