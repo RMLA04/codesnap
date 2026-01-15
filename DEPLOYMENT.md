@@ -29,8 +29,16 @@ This guide will help you deploy your Portfolio Management System to the web so a
 4.  **Configuration**:
     *   **Name**: `portfolio-backend`
     *   **Region**: Closest to you (e.g., Frankfurt, Oregon)
-    *   **Root Directory**: `portfolio-backend` (Crucial! Otherwise it won't find the Dockerfile)
-    *   **Runtime**: **Docker**
+    *   **Root Directory**: `portfolio-backend`
+    *   **Environment**: Select `Java` (NOT Docker).
+    *   **Build Command**:
+        ```bash
+        ./mvnw clean package -DskipTests
+        ```
+    *   **Start Command**:
+        ```bash
+        java -jar target/portfolio-backend-1.0.0.jar
+        ```
     *   **Instance Type**: Free
 5.  Click **"Create Web Service"**.
 6.  **Wait**: It will take a few minutes to build and deploy.
