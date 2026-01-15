@@ -57,6 +57,11 @@ textarea:focus {
     box-shadow: 0 0 0 3px var(--primary-light);
 }
 
+textarea {
+    resize: none;
+    min-height: 120px;
+}
+
 input.error,
 textarea.error {
     border-color: var(--danger-color);
